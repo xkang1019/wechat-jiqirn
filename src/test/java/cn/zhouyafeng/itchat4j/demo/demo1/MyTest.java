@@ -28,22 +28,27 @@ public class MyTest {
 		Calendar calendar = Calendar.getInstance();
 		Date firstTime = calendar.getTime();
 		// 间隔：2分钟
-		long period = 1000 * 10 * 2;
+		long period = 1000 * 60 * 60;
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				System.out.println("执行了...");
 				String hour = DateUtil.getHour();
+				String min =DateUtil.getTime();
 				System.out.println("现在的小时:"+hour);
-				Set<String> stringSet = RedisUtil.keys(redisHS+hour+"*");
+
+				/*Set<String> stringSet = RedisUtil.keys(redisHS+hour+"*");
 				for (String key:stringSet) {
 					System.out.println(key) ;
 					System.out.println(RedisUtil.get(key)) ;
 					String toUser = key.replaceAll(redisHS+hour+":","");
 					System.out.println(toUser) ;
 					MessageTools.sendMsgById(RedisUtil.get(key),toUser);
-				}
+				}*/
+				MessageTools.sendMsgByRealName("喝水小助手提醒：现在"+hour+"点"+min+"分,和我一起成为一天八杯水的人吧！！!","夏康");
+				MessageTools.sendMsgByRealName("喝水小助手提醒：现在"+hour+"点"+min+"分,和我一起成为一天八杯水的人吧！！!","杨颖");
+				MessageTools.sendMsgByRealName("喝水小助手提醒：现在"+hour+"点"+min+"分,和我一起成为一天八杯水的人吧！！!","兰文娇");
 			//	MessageTools.sendMsg(userId,text)
 			}
 		}, firstTime, period);
