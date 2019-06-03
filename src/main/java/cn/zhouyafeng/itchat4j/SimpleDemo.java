@@ -6,6 +6,7 @@ import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.beans.RecommendInfo;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
+import cn.zhouyafeng.itchat4j.searchApi.SerchApi;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
 import org.apache.log4j.Logger;
@@ -61,6 +62,17 @@ public class SimpleDemo implements IMsgHandlerFace {
 				System.out.println(msg.toString());*/
 				MessageTools.sendMsgByRealName("我是喝水小助手,记得喝水!","夏康");
 			}
+			if (text.indexOf("喝水菌")!=-1) {
+				String info = "1.周公解梦\n\n" +
+						"  回复--> 解梦菌:关键字\n\n" +
+						"2.喝水菌喝水去了...";
+
+				return info;
+			}
+            if (text.indexOf("解梦菌")!=-1) {
+				 String text_1 = text.replaceAll("解梦菌","").replaceAll("：","").replaceAll(":","");
+					return SerchApi.GetZGJM(text_1);
+            }
 			return text;
 		}
 		return null;
