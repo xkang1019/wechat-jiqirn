@@ -1,14 +1,25 @@
 package cn.zhouyafeng.itchat4j.utils;
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.*;
 import java.io.*;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.security.cert.X509Certificate;
 
 /**
@@ -19,7 +30,8 @@ import java.security.cert.X509Certificate;
 public class HttpUtils
 {
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
-
+    private static final String CONTENT_TYPE_TEXT_JSON = "text/json";
+    private static final String APPLICATION_JSON = "application/json";
     /**
      * 向指定 URL 发送GET方法的请求
      *
@@ -209,6 +221,110 @@ public class HttpUtils
             log.error("调用HttpsUtil.sendSSLPost Exception, url=" + url + ",param=" + param, e);
         }
         return result.toString();
+    }
+
+
+
+
+    public static String postJson(String url, String json) {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpPost httppost = new HttpPost(url);
+        httppost.addHeader(HTTP.CONTENT_TYPE, APPLICATION_JSON);
+        try {
+            StringEntity se = new StringEntity(json);
+            se.setContentType(CONTENT_TYPE_TEXT_JSON);
+            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, APPLICATION_JSON));
+            httppost.setEntity(se);
+            CloseableHttpResponse response = httpclient.execute(httppost);
+            try {
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    return EntityUtils.toString(entity, "UTF-8");
+                }
+            } finally {
+                response.close();
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭连接,释放资源
+            try {
+                httpclient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
+
+    public static String doPost(String url, JSONObject json){
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpPost post = new HttpPost(url);
+        String result = null;
+        try {
+            StringEntity s = new StringEntity(json.toString());
+            s.setContentEncoding("UTF-8");
+            s.setContentType("application/json");//发送json数据需要设置contentType
+            post.setEntity(s);
+            HttpResponse res = httpclient.execute(post);
+            if(res.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+                HttpEntity entity = res.getEntity();
+                result = EntityUtils.toString(res.getEntity());// 返回json格式：
+
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+
+    public static JSONObject postJson(String urlString ,JSONObject jsonObject) {
+        JSONObject returnJson = null;
+        try {
+            // 创建连接
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setUseCaches(false);
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestProperty("Content-Type","application/json;charset=UTF-8");//**注意点1**，需要此格式，后边这个字符集可以不设置
+            connection.connect();
+            DataOutputStream out = new DataOutputStream(
+                    connection.getOutputStream());
+            out.write(jsonObject.toString().getBytes("UTF-8"));//**注意点2**，需要此格式
+            out.flush();
+            out.close();
+            // 读取响应
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream(),"utf-8"));//**注意点3**，需要此格式
+            String lines;
+            StringBuffer sb = new StringBuffer("");
+            while ((lines = reader.readLine()) != null) {
+                sb.append(lines);
+            }
+            System.out.println("sb:"+sb);
+            returnJson = JSONObject.parseObject(sb.toString());
+            reader.close();
+            // 断开连接
+            connection.disconnect();
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return returnJson;
     }
 
     private static class TrustAnyTrustManager implements X509TrustManager

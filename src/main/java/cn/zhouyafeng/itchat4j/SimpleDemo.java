@@ -36,6 +36,9 @@ public class SimpleDemo implements IMsgHandlerFace {
 			// MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
 			// MessageTools.sendPicMsgByUserId(userId, docFilePath);
 			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			//System.out.println(text);
+			//System.out.println(msg.getFromUserName().substring(msg.getFromUserName().length()-10));
+			String jqrMSg =SerchApi.WXJQR(text,"深圳",msg.getFromUserName().substring(msg.getFromUserName().length()-10));
 			LOG.info(text);
 			if (text.equals("111")) {
 				WechatTools.logout();
@@ -73,7 +76,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 				 String text_1 = text.replaceAll("解梦菌","").replaceAll("：","").replaceAll(":","");
 					return SerchApi.GetZGJM(text_1);
             }
-			return text;
+			return jqrMSg;
 		}
 		return null;
 	}
