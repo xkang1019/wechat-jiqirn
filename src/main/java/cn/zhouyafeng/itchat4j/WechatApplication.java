@@ -61,18 +61,19 @@ public class WechatApplication
 					String toUser = key.replaceAll(redisHS+hour+":","");
 					System.out.println(toUser) ;
 					MessageTools.sendMsgById(RedisUtil.get(key),toUser);
-				}*/if (Integer.parseInt(hour)>8&&Integer.parseInt(hour)<20&&!"12".equals(hour)&&!"14".equals(hour)&&!"13".equals(hour)){
+				}*/if (Integer.parseInt(hour)>8&&Integer.parseInt(hour)<20&&!"12".equals(hour)&&!"13".equals(hour)&&!"14".equals(hour)){
 
                       String leng = SerchApi.GetJD();
-                        leng= leng+"\n";
-                        leng= leng+"\n历史今日-->\n\n";
-                        leng = leng + SerchApi.GetJT(month+"",day+"",limit);
+                      leng= leng+"\n";
+                      leng= leng+"\n历史今日-->\n\n";
+                      leng = leng + SerchApi.GetJT(month+"",day+"",limit);
                       MessageTools.sendMsgByRealName("喝水菌提醒：和我一起成为一天八杯水的人吧." + leng, "夏康");
                       MessageTools.sendMsgByRealName("喝水菌提醒：和我一起成为一天八杯水的人吧." + leng, "杨颖");
                       MessageTools.sendMsgByRealName("喝水菌提醒：和我一起成为一天八杯水的人吧." + leng, "兰文娇");
                       MessageTools.sendMsgByRealName("喝水菌提醒：和我一起成为一天八杯水的人吧." + leng, "刘芳新");
                       MessageTools.sendMsgByRealName("喝水菌提醒：和我一起成为一天八杯水的人吧." + leng, "金梦");
-                    limit++;
+                      MessageTools.sendMsgByRealName("喝水菌提醒：和我一起成为一天八杯水的人吧." + leng, "杨颖朋友");
+                      limit++;
                 }
               //	MessageTools.sendMsg(userId,text)
             }
