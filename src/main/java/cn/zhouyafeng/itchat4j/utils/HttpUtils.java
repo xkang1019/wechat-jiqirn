@@ -5,11 +5,12 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
@@ -171,7 +172,7 @@ public class HttpUtils
     public static String sendSSLPost(String url, String param)
     {
         StringBuilder result = new StringBuilder();
-        String urlNameString = url + "?" + param;
+        String urlNameString = url ;
         try
         {
             log.info("sendSSLPost - {}", urlNameString);
@@ -325,6 +326,29 @@ public class HttpUtils
             e.printStackTrace();
         }
         return returnJson;
+    }
+
+    public  static  String doGet(String url,String charset){
+        if(null == charset){
+            charset = "utf-8";
+        }
+        HttpClient httpClient = null;
+        HttpGet httpGet= null;
+        String result = null;
+        try {
+            httpClient = new SSLClient();
+            httpGet = new HttpGet(url);
+            HttpResponse response = httpClient.execute(httpGet);
+            if(response != null){
+                HttpEntity resEntity = response.getEntity();
+                if(resEntity != null){
+                    result = EntityUtils.toString(resEntity,charset);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     private static class TrustAnyTrustManager implements X509TrustManager

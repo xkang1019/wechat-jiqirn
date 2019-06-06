@@ -17,7 +17,10 @@ public class SerchApi {
         public static final String URL = "http://api.jisuapi.com/dream/search";
         //public static final String keyword = "鞋";//utf-8
 
+
     public static final String URL_XH = "http://api.jisuapi.com/xiaohua/text";
+    public static final String URL_JT = " http://api.jisuapi.com/todayhistory/query";
+
     public static final int pagenum = 1;
     public static final int pagesize = 1;
     public static final String sort = "rand";//addtime/rand
@@ -112,9 +115,71 @@ public class SerchApi {
        }
 
     }
-    public static void main(String[] args) throws Exception {
-        System.out.println(WXJQR("我想喝水","深圳","1")) ;
 
-        System.out.println(JqrInfo.getJqrRequset("我想喝水","深圳","1"));
+    public static String delHtmlTag(String str){
+        String newstr = "";
+        newstr = str.replaceAll("<[.[^>]]*>","");
+        newstr = newstr.replaceAll("&nbsp;", " ");
+        newstr = newstr.replaceAll("&ldquo;", "\n");
+        newstr = newstr.replaceAll("&rdquo;", "\n");
+        return newstr;
+    }
+    public static String GetJT(String monthPar,String dayPar,int limit)  {
+        String result = null;
+        String url = null;
+
+         url = URL_JT + "?appkey=" + APPKEY + "&month=" +monthPar+ "&day="+dayPar ;
+
+        StringBuffer contentAll = new StringBuffer();
+
+        try {
+            result = HttpUtils.sendGet(url, "utf-8");
+            JSONObject json = JSONObject.parseObject(result);
+            if (json.getInteger("status") != 0) {
+                System.out.println(json.getString("msg"));
+                return  "喝水菌脑袋都是水...";
+            } else {
+                JSONArray resultarr = json.getJSONArray("result");
+                int size = resultarr.size()>=limit?limit:0;
+
+                    JSONObject obj =  resultarr.getJSONObject(size);
+                    String title = obj.getString("title");
+                    String year = obj.getString("year");
+                    String month = obj.getString("month");
+                    String day = obj.getString("day");
+                    String content = obj.getString("content");
+                    System.out.println(title + " " + " " + content);
+                    contentAll.append(title+"\n\n");
+                    contentAll.append(content+"\n\n");
+
+                return  delHtmlTag(contentAll.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  "喝水菌脑袋都是水...";
+        }
+    }
+
+    public static String GetJD()  {
+        String result = null;
+        String url = null;
+         url = "https://www.liutianyou.com/api/";
+        StringBuffer contentAll = new StringBuffer();
+        try {
+
+            result = HttpUtils.doGet(url, "utf-8");
+            result=result.substring(result.indexOf("</script>"),result.length()).replaceAll("</script>","");
+            contentAll.append(result);
+            return  contentAll.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "喝水菌去喝水了了";
+        }
+    }
+    public static void main(String[] args) throws Exception {
+        //System.out.println(WXJQR("我想喝水","深圳","1")) ;
+
+        System.out.println(GetJD());
+       System.out.println(GetJT("6","6",100));
     }
 }

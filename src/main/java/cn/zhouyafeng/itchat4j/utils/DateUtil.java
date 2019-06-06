@@ -267,6 +267,34 @@ public class DateUtil {
     }
 
     /**
+     * 得到现在月
+     *
+     * @return
+     */
+    public static String getMonth() {
+        Date currentTime = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = formatter.format(currentTime);
+        String min;
+        min = dateString.substring(5, 7);
+        return min;
+    }
+
+    /**
+     * 得到现在日
+     *
+     * @return
+     */
+    public static String getDay() {
+        Date currentTime = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = formatter.format(currentTime);
+        String min;
+        min = dateString.substring(8, 10);
+        return min;
+    }
+
+    /**
      * 根据用户传入的时间表示格式，返回当前时间的格式 如果是yyyyMMdd，注意字母y不能大写。
      *
      * @param sformat yyyyMMddhhmmss
